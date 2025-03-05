@@ -39,7 +39,7 @@ options(OutDec = ".") #geen comma's
 library(png)
 #for charting
 library(tibbletime) #rollify
-#library(roll) #rolling statistics
+library(roll) #rolling statistics
 library(tidyquant) # xts, zoo, lubridate, performance_analytics, quantmod, TTR
 library(tidyverse) # ggplot2, purrr, dplyr, tidyr, readr, tibble, stringr
 library(readxl) # xlsx inlezen
