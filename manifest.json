@@ -5392,8 +5392,173 @@
     "20250304 Performance_model_pfs.html": {
       "checksum": "958cb86ec32c85ae5dc5aaef0f346da9"
     },
+    "app_files/figure-html/assets_hist-1.png": {
+      "checksum": "6a1829208b6d25bf4d837e6826fc92fe"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_lm-1.png": {
+      "checksum": "2e93da4f341e6b1222cd7d5ac38f849e"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_lq-1.png": {
+      "checksum": "08e4a0e3cab849fc6ed9aef495815575"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_ly-1.png": {
+      "checksum": "3095387f7c920b0c8adcc16271620e72"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_ly2-1.png": {
+      "checksum": "1cd76506fdbf6f4f6b0da047c91a18eb"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_mtd-1.png": {
+      "checksum": "14d237c6693625ab90fdd35bc7be68b7"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_qtd-1.png": {
+      "checksum": "e8b822056b28d55372751a9aa2bcca89"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_start_date_fd-1.png": {
+      "checksum": "810ccd32536f5ff9d7f0e93badc4f8fd"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_start_date_sector_indices-1.png": {
+      "checksum": "a0032fc20cfa0d144899b278f04ee088"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_start_date_vd-1.png": {
+      "checksum": "72135c8d22a430226efc1b7902326316"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_start_date_vp_vf-1.png": {
+      "checksum": "896ecb9e9171fc8d123a608fedf8bf3d"
+    },
+    "app_files/figure-html/attr_RDRM_graphs_ytd-1.png": {
+      "checksum": "e8b822056b28d55372751a9aa2bcca89"
+    },
+    "app_files/figure-html/av_lf_pfs-1.png": {
+      "checksum": "c80672042b1157fe35e8f056c0bd5790"
+    },
+    "app_files/figure-html/chart_standaarddeviaties-1.png": {
+      "checksum": "1fd5c5050212b1afa7d6f39934f97ff2"
+    },
+    "app_files/figure-html/curve_plaatje_si-1.png": {
+      "checksum": "20ac9d1e42da698c24f0a376344f3b29"
+    },
+    "app_files/figure-html/curve_plaatje-1.png": {
+      "checksum": "0e4f36d3afae81eb10ac879430d3e5d7"
+    },
+    "app_files/figure-html/etf_sector_weights_barchart-1.png": {
+      "checksum": "1ce8b1eabbb67686e3c991d6667e8188"
+    },
+    "app_files/figure-html/Fama_French_msci_sectoren-1.png": {
+      "checksum": "f97452a6fd7b08da7dece6106212115b"
+    },
+    "app_files/figure-html/Fama_French_RD-1.png": {
+      "checksum": "719ec21615fcc43d21d2d0ba61ca852c"
+    },
+    "app_files/figure-html/Fama_French_rolling-1.png": {
+      "checksum": "a8a477247ec1a719f4866f470addc3ad"
+    },
+    "app_files/figure-html/mod_dur_pfs_rm-1.png": {
+      "checksum": "0ceb21b1591ce2e45da5d3e937e85420"
+    },
+    "app_files/figure-html/mod_dur_pfs-1.png": {
+      "checksum": "0d2d7fcc32931d7ad5d5cb8de46a1606"
+    },
+    "app_files/figure-html/portfolio_12_mrolling_sd_vs_bm-1.png": {
+      "checksum": "62971396fdf4dbfd82e13e23c988ed86"
+    },
+    "app_files/figure-html/portfolio_12_mrolling_te-1.png": {
+      "checksum": "f2d8ab3aadbec310240d2fbfefe1e2fb"
+    },
+    "app_files/figure-html/portfolio_24_mrolling_sd_vs_bm-1.png": {
+      "checksum": "854563d032890761d6e7c01afb514470"
+    },
+    "app_files/figure-html/portfolio_24_mrolling_te-1.png": {
+      "checksum": "b74a98d66040c8e6679fb5019bdbd7fd"
+    },
+    "app_files/figure-html/portfolio_bm_histogram-1.png": {
+      "checksum": "cf0a9179ea49d25801b437dc4ed2804c"
+    },
+    "app_files/figure-html/portfolio_krds_ou_barchart-1.png": {
+      "checksum": "ba6ddfb5ab8b4a2045ad59c49718ed5c"
+    },
+    "app_files/figure-html/portfolio_krds_total_vs_bm_plot-1.png": {
+      "checksum": "8d47c7712484d3787c48a427504c2e2b"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_2022-1.png": {
+      "checksum": "ff12013058b172257b5c78272e70d3d0"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_2023-1.png": {
+      "checksum": "584685239ac8776e2689180f08e76062"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_lm_ssd-1.png": {
+      "checksum": "eac6f63b709bb8fe72a8ff4e5f1ba462"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_lq-1.png": {
+      "checksum": "30126b434962cc5c4d9542a17f7fc7b2"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_mtd_ssd-1.png": {
+      "checksum": "45b59d6850d53e21944dab6eb96ed36b"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_qtd_ssd-1.png": {
+      "checksum": "241426faa668e4b5c6862840f9055348"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_start_date_fd-1.png": {
+      "checksum": "61454cea935ef92c4b80b9520dd2766a"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_start_date_hz_st_ts_ff_si-1.png": {
+      "checksum": "90a500c0d3a071c3064d56569e913720"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_start_date_vd-1.png": {
+      "checksum": "ed590eb48b4f821b93468363746df430"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_start_date_vp_vf_si-1.png": {
+      "checksum": "424b2103f04a710667e58fc9919cbafa"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_ytd_ld-1.png": {
+      "checksum": "91331086ed13148ca78877133d156a6e"
+    },
+    "app_files/figure-html/portfolio_returns_vs_bm_ytd_ssd-1.png": {
+      "checksum": "241426faa668e4b5c6862840f9055348"
+    },
+    "app_files/figure-html/portfolio_stdev_vs_bm-1.png": {
+      "checksum": "517b7e97f6a48f7357393ea3b1ac9801"
+    },
+    "app_files/figure-html/portfolio_vs_bm_histogram-1.png": {
+      "checksum": "73e9431af6f205568906f5c31faa84bf"
+    },
+    "app_files/figure-html/portfolio_vs_bm_krds_barchart-1.png": {
+      "checksum": "fcd919d356d98bc4eadf197a7ee0c1f7"
+    },
+    "app_files/figure-html/portfolio_vs_bm_tijdlijn-1.png": {
+      "checksum": "3673555b539a4bd1c7625a93fef537a1"
+    },
+    "app_files/figure-html/return_per_ticker_stocks_chart-1.png": {
+      "checksum": "e740a632ae874ff07f7e75210cbaa87f"
+    },
+    "app_files/figure-html/risk_return_per_portfolio_expost_vanaf_30062017-1.png": {
+      "checksum": "2299a23d1b472175608b55cc06f29749"
+    },
+    "app_files/figure-html/sector_RD_wts_pf_vs_bm_hist_vp_chart-1.png": {
+      "checksum": "6c18edf2cdf10b9f59e6bf8a09bc3606"
+    },
+    "app_files/figure-html/te_bets_in_5050_te_chart_afz_en_geheel_fd-1.png": {
+      "checksum": "9bc2eb792b29759dfb5998a29aca10e1"
+    },
+    "app_files/figure-html/te_bets_in_5050_te_chart_afz_en_geheel_ff-1.png": {
+      "checksum": "f315225f235e802fb50c492717e2d7f4"
+    },
+    "app_files/figure-html/te_bets_in_5050_te_chart_afz_en_geheel_st-1.png": {
+      "checksum": "a9089aacc7fd42a86d6a613f1a6aef80"
+    },
+    "app_files/figure-html/te_bets_in_5050_te_chart_afz_en_geheel_ts-1.png": {
+      "checksum": "18468cc5e76b8e5bbe1ba18c37997497"
+    },
+    "app_files/figure-html/te_bets_in_5050_te_chart_afz_en_geheel2-1.png": {
+      "checksum": "ec31d73bbd156927f448753079d838c5"
+    },
+    "app_files/figure-html/tracking_errors_pf_levels-1.png": {
+      "checksum": "8aa51bab6d2047b52d4c2dcf6d88ff1a"
+    },
+    "app_files/figure-html/wtd_av_lf_pfs-1.png": {
+      "checksum": "9d570081eaa45fdc8e7a21afadc0b749"
+    },
     "app.qmd": {
-      "checksum": "72407e7d528811621a6d1fee57fd3de5"
+      "checksum": "f683d65571d05af10cdb9965c350671e"
     },
     "app.rmarkdown": {
       "checksum": "35e39d486eb0faf008f70be7b8e70642"
@@ -5411,7 +5576,10 @@
       "checksum": "e6807d0fb0a455c63cabe59d5a6f35c5"
     },
     "gt_modelpfs_performance.qmd": {
-      "checksum": "72407e7d528811621a6d1fee57fd3de5"
+      "checksum": "f11a567305ace9ecc8af70e0a14a731e"
+    },
+    "gt_modelpfs_performance.rmarkdown": {
+      "checksum": "1c461a106be8b3aa663db473afd20239"
     },
     "images/favicon.ico": {
       "checksum": "2019c45fe1b87ba4dc15b0a851a90411"
