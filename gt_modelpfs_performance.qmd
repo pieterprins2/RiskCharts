@@ -63,16 +63,19 @@ options(knitr.table.format = "html")
 
 ```{r is_op_kantoor_of_niet}
 
-if(str_detect(getwd(), "research")) {
+bij_bavd <- str_detect(pad_deel1, "research")
+bij_pp <- str_detect(pad_deel1, "OneDrive")
+
+if(bij_bavd) {
   pad_deel1 <- "/Users/research/Documents/R files/RiskCharts/"
   library(Rblpapi) #Bloomberg API
   blpConnect()
-} else {
+} else if(bij_pp) {
   pad_deel1 <- "/Users/pieter/OneDrive/R Projects/RiskCharts/"
+} else { #cloud
+  pad_deel1 <- ""
 }
 
-bij_bavd <- str_detect(pad_deel1, "research")
-bij_pp <- str_detect(pad_deel1, "OneDrive")
 #dagelijkse nieuwe dingen alleen bij_bavd
 new_daily <- bij_bavd
 
