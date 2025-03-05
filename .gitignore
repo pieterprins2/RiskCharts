@@ -1,0 +1,9 @@
+# ignore the following files
+check*.*
+*Perfomance_model*.*
+*_old.*
+*.old
+*.html
+pf_downloads/
+pf_downloads_new/
+verschillende_AIRS
