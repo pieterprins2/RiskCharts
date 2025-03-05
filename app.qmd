@@ -75,7 +75,7 @@ if(str_detect(getwd(), "research")) {
 
 bij_bavd <- str_detect(pad_deel1, "research")
 bij_pp <- str_detect(pad_deel1, "OneDrive")
-bij_cloud <- !bij_bavd & !bij_pp
+bij_cloud <- (!bij_bavd & !bij_pp)
 
 #dagelijkse nieuwe dingen alleen bij_bavd
 new_daily <- bij_bavd
@@ -3698,7 +3698,7 @@ pf_bm_ou_region_weights_long_all <-
   select(date, portfolio, everything())
 
 #exporteren sectoren en regio's
-if(!str_detect(pad_deel1, "research")) {
+if(bij_pp) {
   pf_bm_ou_sector_weights_long_all |> write_rds("/Users/pieter/Library/CloudStorage/OneDrive-Personal/R Projects/Beleggingsvoorstel/shiny/pf_bm_ou_sector_weights_long_all.rds")
   pf_bm_ou_region_weights_long_all |> write_rds("/Users/pieter/Library/CloudStorage/OneDrive-Personal/R Projects/Beleggingsvoorstel/shiny/pf_bm_ou_region_weights_long_all.rds")
 }
@@ -4073,7 +4073,7 @@ return_bar_chart <- function(start_date = start_date_attr, end_date = snapshot_d
 #wegschrijven return historie naar rds voor beleggingsvoorstel
 return_history_si <- 
   map_dfr(pf_levels, pf_vs_bm_index_kolom, start_date = start_date_sector_indices) 
-if(!str_detect(pad_deel1, "research")) {
+if(bij_pp) {
 write_rds(return_history_si, "/Users/pieter/Library/CloudStorage/OneDrive-Personal/R Projects/Beleggingsvoorstel/shiny/return_history_si.rds")
 }
 ```
