@@ -39,7 +39,7 @@ options(OutDec = ".") #geen comma's
 library(png)
 #for charting
 library(tibbletime) #rollify
-library(roll) #rolling statistics
+#library(roll) #rolling statistics
 library(tidyquant) # xts, zoo, lubridate, performance_analytics, quantmod, TTR
 library(tidyverse) # ggplot2, purrr, dplyr, tidyr, readr, tibble, stringr
 library(readxl) # xlsx inlezen
@@ -243,6 +243,7 @@ JPM_daily_AIRS_file <- str_c(pad_deel1, "sheet_JPM_daily_from_dec_2013.xlsx")
 # #tabel spreadkosten voor gebruik in UI en berekeningen
 # kosten_tabel_spreads <- read_excel(kosten_sheet, sheet = "spreadkosten") |> select(categorie, spreadkosten, omzet)
 
+if(bij_pp) {rsconnect::writeManifest()}
 ```
 
 ```{r maken_RDRM_en_country_region_currency_table}
