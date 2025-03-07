@@ -39,7 +39,7 @@ options(OutDec = ".") #geen comma's
 library(png)
 #for charting
 library(tibbletime) #rollify
-library(roll) #rolling statistics
+library(slider) #rolling statistics
 library(tidyquant) # xts, zoo, lubridate, performance_analytics, quantmod, TTR
 library(tidyverse) # ggplot2, purrr, dplyr, tidyr, readr, tibble, stringr
 library(readxl) # xlsx inlezen
@@ -4353,12 +4353,12 @@ pf_bm_returns_sd_te_12_24 <-
   pf_bm_returns_si %>%
   filter(date >= start_date_attr) %>%
   mutate(diff = pf_rt - BM_rt,
-         te_12 = roll_sd(diff, 12) * sqrt(12),
-         te_24 = roll_sd(diff, 24) * sqrt(12),
-         pf_sd_12 = roll_sd(pf_rt, 12) * sqrt(12),
-         bm_sd_12 = roll_sd(BM_rt, 12) * sqrt(12),
-         pf_sd_24 = roll_sd(pf_rt, 24) * sqrt(12),
-         bm_sd_24 = roll_sd(BM_rt, 24) * sqrt(12)) %>%
+         te_12 = slide_dbl(diff, .f = sd, .before = 11, .complete = TRUE) * sqrt(12),
+         te_24 = slide_dbl(diff, .f = sd, .before = 23, .complete = TRUE) * sqrt(12),
+         pf_sd_12 = slide_dbl(pf_rt, .f = sd, .before = 11, .complete = TRUE) * sqrt(12),
+         bm_sd_12 = slide_dbl(BM_rt, .f = sd, .before = 11, .complete = TRUE) * sqrt(12),
+         pf_sd_24 = slide_dbl(pf_rt, .f = sd, .before = 23, .complete = TRUE) * sqrt(12),
+         bm_sd_24 = slide_dbl(BM_rt, .f = sd, .before = 23, .complete = TRUE) * sqrt(12)) %>%
   select(-pf_rt, -BM_rt, -diff) %>%
   pivot_longer(cols = te_12:bm_sd_24, values_to = "standaarddeviatie") %>%
   mutate(portfolio = factor(portfolio, levels = portfolio_levels),
