@@ -9217,8 +9217,8 @@ if(str_detect(getwd(), "pieter")) {
 ## Waardering
   - Als basis voor de waarde van alle individuele regels in de modelportefeuilles dienen bestanden uit AIRS.
   - Voor intra-maand updates en voor aanvullende historie t.b.v. risicoberekeningen worden koersen uit Bloomberg gebruikt.
-  - De enige verschillen die kunnen overblijven zijn in de cash standen. De reden hiervoor is dat de cash standen in AIRS na het moment waarop de VOLK bestanden zijn gedraaid, aan het begin van de maand, nog kunnen veranderen.
-  - De performance cijfers sluiten dus nagenoeg aan bij de cijfers uit AIRS.
+  - De enige verschillen die kunnen overblijven zijn in de cash standen. De reden hiervoor is dat de cash standen in AIRS na het moment waarop de VOLK bestanden zijn gedraaid, aan het begin van de maand, nog kunnen veranderen. Daarom worden een aantal dagen na de maandwinde nieuwe VOLK bestanden gemaakt.
+  - De performance cijfers sluiten dus aan bij de cijfers uit AIRS. Behalve mogelijk voor de mtd cijfers.
 
 ## Input
 
