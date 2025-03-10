@@ -42,8 +42,8 @@ library(tibbletime) #rollify
 library(slider) #rolling statistics
 library(tidyquant) # xts, zoo, lubridate, performance_analytics, quantmod, TTR
 library(tidyverse) # ggplot2, purrr, dplyr, tidyr, readr, tibble, stringr
+library(lubridate) #datumfuncties
 library(readxl) # xlsx inlezen
-library(kableExtra) #tabellen
 library(RColorBrewer) #kleuren
 library(directlabels) #voor labels aan uiteinde van lijnen, geom_dl
 library(ggrepel) #label repel
@@ -6115,7 +6115,7 @@ attr_tabel_RDRM_simple_summaries_nice <- function(start_date = start_date_attr, 
    if(end_date > start_date) {
      attributie_tabel_nice
    } else {
-     kbl(str_c("geen maandgevens na ", format(end_date, "%d-%b")))
+        tribble(~x, str_c("geen maandgevens na ", format(end_date, "%d-%b"))) |> rename(" " = x) |> gt()   
    }
  }
 ```
@@ -6736,7 +6736,7 @@ attr_tabel_sector_summary_nice <- function(pf = "vp", start_date = start_date_at
      if(end_date > start_date) {
        attributie_tabel_nice
       } else {
-      kbl(str_c("geen maandgevens na ", format(lastdate, "%d-%b")))
+        tribble(~x, str_c("geen maandgevens na ", format(end_date, "%d-%b"))) |> rename(" " = x) |> gt()   
       }
 }
 ```
@@ -7857,8 +7857,9 @@ cum_bijdrage_bets_graph(start_date = start_date_attr, end_date = snapshot_date) 
 <!--   gt_font_padding_align() |>  -->
 <!--   tab_header(str_c("Bijdrage van posities - portefeuilleniveau, van ", format(as.Date(start_date), "%d-%b-%Y"), " t/m ", format(as.Date(end_date), "%d-%b-%Y"))) -->
 <!--   } else -->
-<!--   kbl(str_c("geen gevens na ", format(lastdate, "%d-%b")))} -->
-
+<!-- {
+        tribble(~x, str_c("geen maandgevens na ", format(end_date, "%d-%b"))) |> rename(" " = x) |> gt()   
+   }
 <!-- ``` -->
 
 <!-- ::: panel-tabset -->
