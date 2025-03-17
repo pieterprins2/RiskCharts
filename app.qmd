@@ -205,12 +205,17 @@ types_levels_colors <-
                                               TRUE ~ cashblue))
 
 portfolios_pfs_bms_wgts_assets <-
-  portfolios_pfs |>
+  portfolios_pfs |> 
+  select(portfolio) |> 
   mutate(JPM = ifelse(portfolio %in% c("VP100", "RD100"), 0, str_sub(portfolio, 7, 8)),
          JPM = as.numeric(JPM)/100,
-         MSDEWIN = 1 - JPM) |>
-  pivot_longer(cols = c(JPM, MSDEWIN), values_to = "bm_wgt", names_to = "bm") |>
-  mutate(asset = ifelse(bm == "MSDEWIN", "Aandelen", "Obligaties"))
+         MSDEWIN = 1 - JPM,
+         Cash = 0) |>
+  pivot_longer(cols = c(JPM, MSDEWIN, Cash), values_to = "bm_wgt", names_to = "bm") |>
+  mutate(asset = case_when(bm == "MSDEWIN" ~ "Aandelen", 
+                           bm == "JPM" ~ "Obligaties",
+                           TRUE ~ "Cash")) |> 
+  select(-bm)
 
 etf_levels <- c("IWDA_NA", "SPY5_GY", "SPPY_GY", "SXXPIEX_GY","MWOP_GY", "LEAD_GY", "IJPA_NA", "XZMJ_GY", "WTCH_NA", "XDWH_GY", "NTSCLBE_NA")
 
@@ -880,7 +885,9 @@ all_prices_local_long <-
 ```
 
 ```{r dates}
-dates <- all_prices_local_long %>% ungroup() %>% select(date) %>% arrange(date) |> unique()
+dates <- all_prices_local_long %>% 
+  filter(date >= start_date_sector_indices) |> 
+  ungroup() %>% select(date) %>% arrange(date) |> unique()
 
 twee_jaar_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 24))
 jaar_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 12))
@@ -889,13 +896,54 @@ maand_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date),
 
 #datum_breaks voor charts
 datum_breaks <- function(start_date, end_date) {
-  if(as.Date(end_date) - as.Date(start_date) >= years(6)) {twee_jaar_datums} 
-  else if (as.Date(end_date) - as.Date(start_date) >= months(13) &
-            as.Date(end_date) - as.Date(start_date) < years(6)) {jaar_datums}
-  else if (as.Date(end_date) - as.Date(start_date) > months(4) &
-            as.Date(end_date) - as.Date(start_date) < months(13)) {kwartaal_datums}
-  else {maand_datums}
+  if (as.Date(end_date) - as.Date(start_date) >= years(6)) {
+    twee_jaar_datums[twee_jaar_datums >= as.Date(start_date) & twee_jaar_datums <= as.Date(end_date)]
+  } else if (as.Date(end_date) - as.Date(start_date) >= months(13) &
+             as.Date(end_date) - as.Date(start_date) < years(6)) {
+    jaar_datums[jaar_datums >= as.Date(start_date) & jaar_datums <= as.Date(end_date)]
+  } else if (as.Date(end_date) - as.Date(start_date) > months(4) &
+             as.Date(end_date) - as.Date(start_date) < months(13)) {
+    kwartaal_datums[kwartaal_datums >= as.Date(start_date) & kwartaal_datums <= as.Date(end_date)]
+  } else {
+    maand_datums[maand_datums >= as.Date(start_date) & maand_datums <= as.Date(end_date)]
+  }
 }
+
+#Grok
+# Assuming these are defined globally as before
+dates <- all_prices_local_long %>% 
+  filter(date >= start_date_sector_indices) |> 
+  ungroup() %>% select(date) %>% arrange(date) |> unique()
+
+twee_jaar_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 24))
+jaar_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 12))
+kwartaal_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 3))
+maand_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 1))
+
+datum_breaks <- function(start_date, end_date) {
+  if (as.Date(end_date) - as.Date(start_date) >= years(6)) {
+    twee_jaar_datums[twee_jaar_datums >= as.Date(start_date) & twee_jaar_datums <= as.Date(end_date)]
+  } else if (as.Date(end_date) - as.Date(start_date) >= months(13) &
+             as.Date(end_date) - as.Date(start_date) < years(6)) {
+    jaar_datums[jaar_datums >= as.Date(start_date) & jaar_datums <= as.Date(end_date)]
+  } else if (as.Date(end_date) - as.Date(start_date) > months(4) &
+             as.Date(end_date) - as.Date(start_date) < months(13)) {
+    kwartaal_datums[kwartaal_datums >= as.Date(start_date) & kwartaal_datums <= as.Date(end_date)]
+  } else {
+    maand_datums[maand_datums >= as.Date(start_date) & maand_datums <= as.Date(end_date)]
+  }
+}
+
+#datum_labels voor charts
+datum_labels <- function(start_date, end_date) {
+  if(as.Date(end_date) - as.Date(start_date) >= years(6)) {"%Y"} 
+  else if (as.Date(end_date) - as.Date(start_date) >= months(13) &
+            as.Date(end_date) - as.Date(start_date) < years(6)) {"%Y"}
+  else if (as.Date(end_date) - as.Date(start_date) > months(4) &
+            as.Date(end_date) - as.Date(start_date) < months(13)) {"%b-%y"}
+  else {"%b-%y"}
+}
+
 ```
 
 ```{r exchange_rates}
@@ -2205,7 +2253,7 @@ gt_cols_label_attr <- function(gt_tbl) {
       contains("ector") ~ px(200),
       contains("portfolio") ~ px(130),
       contains("ff") ~ px(70),
-      everything() ~ px(50))
+      everything() ~ px(55))
   }
 ```
 
@@ -2335,36 +2383,95 @@ BM_weight_RD <- function(pf, RDRM = "RDRM") {
   return(BM_weight_RD)
 }
 
-asset_verdeling <-
+#ook als een asset categorie na is moet er een nul verschijnen, dit is lastig
+bestaande_portfolio_dates_combis_aandelen <- 
+  pf_portfolios |> ungroup() |> select(date, portfolio) |> unique()|> mutate(asset = "Aandelen")
+bestaande_portfolio_dates_combis_obligaties <- 
+  pf_portfolios |> ungroup() |> select(date, portfolio) |> unique()|> mutate(asset = "Obligaties")
+bestaande_portfolio_dates_combis_cash <- 
+  pf_portfolios |> ungroup() |> select(date, portfolio) |> unique()|> mutate(asset = "Cash")
+
+bestaande_portfolio_dates_combis_asset_categorieen <-
+  bind_rows(bestaande_portfolio_dates_combis_aandelen,
+           bestaande_portfolio_dates_combis_obligaties,
+           bestaande_portfolio_dates_combis_cash)
+
+
+#asset verdeling historie, daarvoor ook NA's maken als portefeuille niet bestaat:
+#asset_verdeling bestaand: 
+asset_weights_long_beschikbaar <-
   pf_portfolios |>
   group_by(portfolio, asset, date) |>
-  summarise(weight = sum(weight)) |>
-  left_join(portfolios_pfs_bms_wgts_assets, by = c("portfolio", "asset")) |>
-  select(-pf, -bm) |>
-  mutate(bm_wgt = ifelse(asset == "Cash", 0, bm_wgt),
-         OU = weight - bm_wgt,
-         asset = factor(asset, levels = asset_levels),
-         portfolio = factor(portfolio, levels = portfolio_levels))
+  summarise(weight_beschikbaar = sum(weight))  
 
-asset_weights_tabel <-
+#als asset cat NA is maar portefeuille bestaat al wel, dan 0 maken
+asset_weights_long <-
+  bestaande_portfolio_dates_combis_asset_categorieen |> 
+  left_join(asset_weights_long_beschikbaar, by = c("portfolio", "date", "asset")) |>
+  mutate(weight_beschikbaar = ifelse(is.na(weight_beschikbaar), 0, weight_beschikbaar)) |> 
+  #benchmarks erbij zodat deze ook voor de beschikbare datum NA worden
+  left_join(portfolios_pfs_bms_wgts_assets, by = c("portfolio", "asset"))
+
+#voor alle data waarop portefeuilles bestaan
+portfolio_dates <- pf_portfolios |> ungroup() |> select(date) |> unique()
+
+#asset_verdeling NA maken: 
+asset_weights_NA_maken <- 
+  function(portfolio, asset) {
+    portfolio_levels_kolom |> 
+      filter(ticker == !!portfolio) |> 
+      rename(portfolio = ticker) |> 
+      mutate(asset = !!asset) |> 
+      bind_cols(portfolio_dates) |> 
+      mutate(weight_NA = NA)
+}
+
+#drie onder elkaar
+asset_weights_long_NA <-
+  map_dfr(portfolio_levels, asset_weights_NA_maken, asset = "Aandelen") |> 
+  bind_rows(map_dfr(portfolio_levels, asset_weights_NA_maken, asset = "Obligaties")) |> 
+  bind_rows(map_dfr(portfolio_levels, asset_weights_NA_maken, asset = "Cash")) |> 
+  group_by(portfolio, asset, weight_NA)
+
+#samenvoegen met beschikbaar
+asset_verdeling <-
+  asset_weights_long_NA |> 
+  left_join(asset_weights_long, by = c("portfolio", "asset", "date")) |> 
+  mutate(weight = ifelse(!is.na(weight_beschikbaar), weight_beschikbaar, weight_NA)) |>
+  group_by(portfolio, asset, weight) |> 
+  select(-weight_NA, -weight_beschikbaar) |> 
+  #nu is weight NA als nog niet beschikbaar
+  mutate(OU = weight - bm_wgt,
+         asset = factor(asset, levels = asset_levels),
+         portfolio = factor(portfolio, levels = portfolio_levels)) |> 
+  select(date, portfolio, asset, weight, bm_wgt, OU) 
+
+#asset verdeling op moment van snapshot
+asset_weights_tabel <- function(asof_date = snapshot_date) {
   asset_verdeling |>
-    filter(date == snapshot_date) |>
+    filter(date == asof_date) |>
     select(-date) |>
-    pivot_wider(values_from = c (weight:OU), names_from = portfolio, values_fill = 0) |>
+    pivot_wider(values_from = c(weight:OU), names_from = portfolio, values_fill = 0) |>
     select(asset, contains(portfolio_levels)) |>
     arrange(asset)
+}
 
-total_row <-
-  asset_weights_tabel |> ungroup() |> summarise(asset = "Totaal", across(where(is.numeric), sum))
+total_row <- function(asof_date = snapshot_date) {
+  asset_weights_tabel(asof_date) |> ungroup() |> summarise(asset = "Totaal", across(where(is.numeric), sum))
+}
 
-asset_weights_tabel |>
-  bind_rows(total_row) |>
+asset_weights_tabel_nice <- function(asof_date = snapshot_date) {
+  asset_weights_tabel(asof_date) |>
+  bind_rows(total_row(asof_date)) |>
   mutate(across(where(is.numeric), ~round(.*100, 1))) |>
   ungroup() |> 
   gt() |> 
   gt_pfs_ou() |> 
-  tab_header(str_c("Asset categorieën in portefeuilles en benchmarks, ", snapshot_date_format)) |> 
+  tab_header(str_c("Asset categorieën in portefeuilles en benchmarks, ", format(asof_date, "%d-%b-%Y"))) |> 
   gt_font_padding_align()
+}
+
+asset_weights_tabel_nice(asof_date = snapshot_date)
 ```
 
 ### Asset categorieën - historisch
@@ -2619,7 +2726,9 @@ overzicht_duration_NL_staatsleningen <-
 ```{r portfolio_krds_total_vs_bm_plot}
 
 #nieuw plaatje
-all_shares_weights_dur_rm_level |> 
+
+duration_pfs_vs_bm <-
+  all_shares_weights_dur_rm_level |> 
   mutate(portfolio = factor(portfolio, levels = c("BM", portfolio_levels)),
          sector = "Staatsobligaties") |>
   left_join(portfolios_bms_colors, by = c("portfolio" = "ticker")) |>
@@ -2627,9 +2736,9 @@ all_shares_weights_dur_rm_level |>
          sector = factor(sector, levels = c("Credits", "Staatsobligaties"))) %>%
   ggplot() +
     geom_bar(aes(x = portfolio, y = duration, fill = color, alpha = sector), stat = "identity", position = "stack", col = bmgray) +
-    geom_text(aes(x = portfolio, y = duration+0.5, label = round(duration, 1), fill = NULL), data = all_shares_weights_dur_rm_level) +
+    geom_text(aes(x = portfolio, y = duration + 0.5, label = round(duration, 1)), fill = NULL, size = 4, col = "gray30", fontface = 'bold', data = all_shares_weights_dur_rm_level) +
     scale_y_continuous(limits = c(0, 11), breaks = 1:10)+
-    ggtitle(str_c("Duration portefeuilles en benchmark, ", snapshot_date_format)) +
+    ggtitle(str_c("Duration modelportefeuilles en benchmark, ", snapshot_date_format)) +
     #labs(caption = str_c("duration van SUA0_GY is ", round(SUA0_GY_duration, 1) , " jaar")) +
     scale_fill_identity() +
     scale_alpha_manual(values = c(0.8, 0.4)) + # was scale_alpha_manual(values = c(0.8, 0.8))+ #zonder credits
@@ -2637,6 +2746,7 @@ all_shares_weights_dur_rm_level |>
     theme(legend.position = "bottom") +
     guides(fill = "none")
 
+duration_pfs_vs_bm
 ```
 
 #### Tabel duration NL staatsleningen
@@ -2674,12 +2784,13 @@ all_shares_weights_dur_rm_level |>
 
 ```
 
-#### Key Rate Durations RM-deel portefeuilles en benchmark
+#### Key Rate Durations RM-deel modelportefeuilles en benchmark
 
 ```{r portfolio_vs_bm_krds_barchart}
 
 # "Key Rate Durations portefeuilles en benchmark"
-all_shares_weights_pds_rm_level %>%
+KRDs_pfs_vs_bm <-
+  all_shares_weights_pds_rm_level %>%
   left_join(portfolios_bms_colors, by = c("portfolio" = "ticker")) |>
   mutate(portfolio = factor(portfolio, levels = c("BM", portfolio_levels))) %>%
   mutate(t_curve = as.character(t_curve)) %>%
@@ -2688,7 +2799,7 @@ all_shares_weights_pds_rm_level %>%
   group_by(t_curve, portfolio, sector) |>
   ggplot(aes(x = t_curve)) +
   geom_bar(aes(y = KRD, fill = color, alpha = sector), col = bmgray, position = "stack",stat = "identity") +
-  ggtitle(str_c("Key Rate Durations RM-deel portefeuilles en benchmark, ", snapshot_date_format)) +
+  ggtitle(str_c("Key Rate Durations RM-deel modelportefeuilles en benchmark, ", snapshot_date_format)) +
   scale_fill_identity() +
   scale_alpha_manual(values = c(0.8, 0.4)) + #zonder credits  scale_alpha_manual(values = c(0.8, 0.8))
   facet_grid(~portfolio) +
@@ -2696,6 +2807,7 @@ all_shares_weights_pds_rm_level %>%
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 90, vjust = 0.5, size = 9))
 
+KRDs_pfs_vs_bm
 ```
 
 #### Key Rate Durations over- en ondergewichten RM-deel portefeuilles
@@ -3722,7 +3834,7 @@ tabel_ou_portfolio_country_region_sector_weights <- function(item = "region", RD
 
 ```{r nice_country_etc_table}
 
-nice_country_etc_table <- function(item = "country", RDRM = "RD", asof_date = lastdate) {
+nice_country_etc_table <- function(item = "country", RDRM = "RD", asof_date = snapshot_date) {
   #niet snapshot_date, want van bm's is deze ook alleen beschikbaar per ultimo's
   titelitem <-
     case_when(item == "country" ~ "Landen",
@@ -3733,7 +3845,7 @@ nice_country_etc_table <- function(item = "country", RDRM = "RD", asof_date = la
   titelportefeuille <-
     case_when(RDRM == "RDRM" ~ "gehele",
               RDRM == "RD" ~ "RD-deel")
-  tabel_portfolio_country_region_sector_weights(item = item, RDRM = RDRM) %>%
+  tabel_portfolio_country_region_sector_weights(item = item, RDRM = RDRM, asof_date = asof_date) %>%
   mutate_if(is.numeric, ~round(.*100, 1)) %>%
   ungroup() |> 
   gt() |> 
@@ -3746,21 +3858,21 @@ nice_country_etc_table <- function(item = "country", RDRM = "RD", asof_date = la
 ### Regiogewichten RD
 
 ```{r portfolio_region_weights_tabel}
-nice_country_etc_table(item = "region", RDRM = "RD")
+nice_country_etc_table(item = "region", RDRM = "RD", asof_date = snapshot_date)
 
 ```
 
 ### Valuta (groepen) - portefeuilleniveau
 
 ```{r portfolio_currency_2_weights_tabel}
-nice_country_etc_table(item = "currency_2", RDRM = "RDRM") %>%
+nice_country_etc_table(item = "currency_2", RDRM = "RDRM", asof_date = snapshot_date) %>%
   tab_footnote("USD (related): USD, CAD, AUD, HKD, SGD en NZD, EUR (related): EUR, DKK, SEK, Other: NOK en ILS")
 ```
 
 ### Landengewichten RD
 
 ```{r portfolio_country_weights_tabel}
-nice_country_etc_table(item = "country", RDRM = "RD")
+nice_country_etc_table(item = "country", RDRM = "RD", asof_date = snapshot_date)
 ```
 
 ### ETF's
@@ -4046,7 +4158,7 @@ return_charts <- function(start_date = start_date_attr, end_date = snapshot_date
             plot.title = element_text(hjust = 0.5))
 }
 
-return_bar_chart <- function(start_date = start_date_attr, end_date = snapshot_date, pf = "vp") {
+return_barchart<- function(start_date = start_date_attr, end_date = snapshot_date, pf = "vp") {
   pf_vs_bm_returns_kolom(pf = pf) %>%
     filter(date >= start_date,
            date <= end_date) %>%
@@ -8596,7 +8708,7 @@ pfs_bms_chart_data <-
                          levels = c("JPM", "RD50RM50", "DZ50RM50", "VP50RM50", "VD50RM50",
                                     "BM5050", "RD30RM70", "BM3070", "RD70RM30", "BM7030",
                                     "RD100", "VP100", "BM_100RD")),
-         name = ticker) |> 
+         name = as.character(ticker)) |> 
   mutate(label = case_when(str_detect(ticker, "50RM50") ~ str_sub(ticker, 1, 4),
                            str_detect(ticker, "70RM30") ~ str_sub(ticker, 1, 4),
                            str_detect(ticker, "30RM70") ~ str_sub(ticker, 1, 4),
@@ -8694,7 +8806,8 @@ sector_chart_data_incl <-
   mutate(label = abbreviate(ticker),
          label = factor(label, levels = abbreviate(sector_levels_RD)),
          name = ticker,
-         alpha = 0.6) |> 
+         alpha = 0.6,
+         date = as.Date(date)) |> 
   select(date, ticker, price_index, name, label, fill, alpha) 
 
 sector_chart_data_incl_excl <-
@@ -8865,9 +8978,9 @@ portfolios_benchmarks_chart_data <-
 
 ```
 
-```{r perf_bar_chart}
+```{r perf_barchart}
 
-perf_bar_chart <- 
+perf_barchart<- 
   function(chart_data = sector_chart_data_incl, titel_tekst = "MSCI World sectoren, ", start_date = start_date_attr, end_date = snapshot_date) {
     if(end_date > start_date) {
       chart_data <-
@@ -8886,7 +8999,7 @@ perf_bar_chart <-
       geom_text(data = chart_data, aes(x = label, 
                                        y = return/2, 
                                        label = str_c(round(return*100, 1), "%")), 
-                size = 3, col = "gray30", fontface = 'bold') +
+                size = 4, col = "gray30", fontface = 'bold') +
       scale_y_continuous(labels = scales::percent_format(accuracy = 0.1)) +
       scale_x_discrete() +
       ggtitle(str_c(titel_tekst, ", van ", format(as.Date(start_date), "%d-%b-%Y"), " t/m ", format(as.Date(end_date), "%d-%b-%Y"))) +
@@ -8903,23 +9016,34 @@ perf_bar_chart <-
 ```
 
 ```{r all_mkts_barchart}
+pfs_bms_barchart <- function(start_date = start_date_attr, end_date = snapshot_date) {
+  perf_barchart(chart_data = pfs_bms_chart_data, titel_tekst = "Modelportefeuilles en benchmarks", start_date, end_date) + 
+  theme(axis.text = element_text(size = 10)) + 
+  geom_vline(xintercept = c(1.5, 3.5, 8.5, 10.5), linetype = "dotdash", alpha = 0.7) +
+  annotate("text", x = (1.5+3.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD30RM70") +
+  annotate("text", x = (3.5+8.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD50RM50") +
+  annotate("text", x = (8.5+10.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD70RM30") +
+  annotate("text", x = (10.5+13.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD100")
+}
+sector_en_styles_barchart <- function(start_date = start_date_attr, end_date = snapshot_date) {
+  perf_barchart(chart_data = sector_en_styles_chart_data_incl, titel_tekst = "MSCI sectoren en stijlen, in EUR, incl. div.", start_date, end_date) + geom_vline(xintercept = c(11.5), linetype = "dotdash", alpha = 0.7)
+}
+landen_barchart <- function(start_date = start_date_attr, end_date = snapshot_date) {
+  perf_barchart(chart_data = landen_chart_data, titel_tekst = "MSCI landen/regio's, in EUR, incl. div.", start_date, end_date)
+}
+other_currency_barchart<- function(start_date = start_date_attr, end_date = snapshot_date) {
+  perf_barchart(chart_data = other_currency_chart_data, titel_tekst = "Other, in EUR, incl. div.", start_date, end_date) + geom_vline(xintercept = c(9.5), linetype = "dotdash", alpha = 0.7)
+}
 
 all_mkts_barchart <- function(start_date = start_date_attr, end_date = snapshot_date) {
   grid.arrange(
-    perf_bar_chart(chart_data = pfs_bms_chart_data, titel_tekst = "Modelportefeuilles en benchmarks", start_date, end_date) + 
-      theme(axis.text = element_text(size = 10)) + 
-      geom_vline(xintercept = c(1.5, 3.5, 8.5, 10.5), linetype = "dotdash", alpha = 0.7) +
-      annotate("text", x = (1.5+3.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD30RM70") +
-      annotate("text", x = (3.5+8.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD50RM50") +
-      annotate("text", x = (8.5+10.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD70RM30") +
-      annotate("text", x = (10.5+13.5)/2, y = MSDEWIN_perf(start_date, end_date) + .01, label = "RD100"),
-    perf_bar_chart(chart_data = sector_en_styles_chart_data_incl, titel_tekst = "MSCI sectoren en stijlen, in EUR, incl. div.", start_date, end_date) + geom_vline(xintercept = c(11.5), linetype = "dotdash", alpha = 0.7),
-    perf_bar_chart(chart_data = landen_chart_data, titel_tekst = "MSCI landen/regio's, in EUR, incl. div.", start_date, end_date),
-    perf_bar_chart(chart_data = other_currency_chart_data, titel_tekst = "Other, in EUR, incl. div.", start_date, end_date) + geom_vline(xintercept = c(9.5), linetype = "dotdash", alpha = 0.7),
-   # perf_bar_chart(chart_data = other_currency_chart_data, titel_tekst = "Other, ", start_date, end_date),
-   # perf_bar_chart(chart_data = other_currency_chart_data, titel_tekst = "Other, ", start_date, end_date),
-    nrow = 2)
+    pfs_bms_barchart(start_date = start_date, end_date = end_date),
+    sector_en_styles_barchart(start_date = start_date, end_date = end_date),
+    landen_barchart(start_date = start_date, end_date = end_date),
+    other_currency_barchart(start_date = start_date, end_date = end_date),
+  nrow = 2)
 }
+
 ```
 
 ::: panel-tabset
@@ -9055,61 +9179,270 @@ all_mkts_barchart(start_date = as.Date(start_date_sector_indices), end_date = sn
 #| fig-width: 14
 #| fig-height: 15
 
+# indices_plot <- function(data, start_date, end_date, title, subtitle, caption) {
+#   start_date <- as.Date(start_date)
+#   end_date <- as.Date(end_date)
+#   
+#   available_tickers <- data |> 
+#     filter(date == start_date) |> 
+#     pull(ticker)
+#   if (length(available_tickers) == 0) {
+#     available_tickers <- unique(data$ticker)
+#   }
+#   
+#   data <- data |> 
+#     group_by(ticker) |> 
+#     filter(date >= start_date, date <= end_date, ticker %in% available_tickers) |> 
+#     mutate(price_delta = ifelse(date == start_date, 0, 
+#                                 coalesce(price_index / lag(price_index) - 1, 0)), 
+#            price_index = 100 * cumprod(1 + coalesce(price_delta, 0)),
+#            date = as.Date(date)) |> 
+#     select(-price_delta)
+#   
+#   last_date <- max(data$date)
+#   label_data <- data |> filter(date == last_date)
+#   # print("Label data at last_date:")
+#   # print(label_data)
+#   
+#   # Calculate dynamic extension, ensuring enough space for short ranges
+# 
+#   ggplot(data = data,
+#          aes(x = date, y = price_index, group = ticker, col = fill, alpha = alpha)) +
+#     geom_line(linewidth = 1.2) +
+#     scale_color_identity() +
+#     geom_label_repel(data = label_data,
+#                      aes(label = label, fill = fill, alpha = alpha),
+#                      col = "black", 
+#                      nudge_x = 50,  # Fixed nudge into extended space
+#                      #direction = "y",
+#                      max.overlaps = Inf,
+#                      min.segment.length = 0,
+#                      box.padding = 0.5,
+#                      force = 5,  # Stronger repulsion for short ranges
+#                      force_pull = 0,  # Reduce pull-back to origin
+#                      segment.size = 0.5) +
+#     scale_fill_identity() +
+#     scale_alpha_identity() +
+#     scale_x_date(limits = c(start_date, end_date + max( as.integer((end_date - start_date) * .3)), 100),
+#                   breaks = datum_breaks(start_date, end_date), 
+#                   date_labels = datum_labels(start_date, end_date)) +
+#     scale_y_continuous(limits = c(0, max(data$price_index, na.rm = TRUE) * 1.1),
+#                        breaks = seq(0, ceiling(max(data$price_index, na.rm = TRUE) / 100) * 100, 100),
+#                        minor_breaks = NULL) +
+#     theme_bw() +
+#     labs(x = "", y = "") +
+#     ggtitle(label = str_c(title, 
+#                           " van ", 
+#                           day(start_date), "-", month(start_date, label = TRUE), "-", year(start_date), 
+#                           " t/m ", 
+#                           day(end_date), "-", month(end_date, label = TRUE), "-", year(end_date)),
+#             subtitle) +
+#     labs(caption) +
+#     theme(legend.position = "none",
+#           axis.text = element_text(size = 12),
+#           plot.title = element_text(size = 12, hjust = 0.5))
+# }
+
+# indices_plot <- function(data, start_date = start_date_sector_indices, end_date = snapshot_date, title = title, subtitle = subtitle, caption = caption) {
+#   #welke tickers zijn available vanaf start_date
+#   available_tickers <-
+#     data |> filter(date == start_date) |> pull(ticker)
+#   #data maken met indices startdatum = start_date
+#   data <- data |>
+#     group_by(ticker) |>
+#     filter(date >= start_date, date <= end_date, ticker %in% available_tickers) |>
+#     mutate(price_delta = ifelse(date == start_date, 0, price_index/lag(price_index) - 1),
+#            price_index = 100 * cumprod(1 + price_delta),
+#            date = as.Date(date)) |>
+#     select(-price_delta) |>
+#     arrange(ticker, date)
+#   #BM
+#   label_data <-
+#     data |>
+#     filter(date == end_date)
+# 
+#     ggplot(data = data,
+#            aes(x = date, y = price_index, group = ticker, col = fill, alpha = alpha)) +
+#     geom_line(linewidth = 1.2) +
+#     scale_color_identity() +
+#     geom_label_repel(data = label_data,
+#                      aes(label = label, fill = fill, alpha = alpha),
+#                      
+#                      col = "black",
+#                      nudge_x = 100,
+#                      #direction = "y",
+#                      box.padding = 1,
+#                      force = 2,
+#                      force_pull = 2,
+#                      min.segment.length = 0,
+#                      segment.size = 0.5,
+#                      max.overlaps = Inf,
+#                      xlim = c(NA, end_date + 200)) +
+#     scale_fill_identity() +
+#     scale_alpha_identity() +
+#     scale_x_date(limits = c(start_date, end_date + max(as.integer((end_date - start_date) * .3)), 100),
+#                  breaks = unique(c(datum_breaks(start_date, end_date), snapshot_date, end_date)),
+#                  date_labels = datum_labels(start_date, end_date)) +
+#     scale_y_continuous(breaks = seq(0, 1000, 100), minor_breaks = seq(0, 1000, 50)) +
+#     theme_bw() +
+#     labs(x = "", y = "")+
+#     ggtitle(label = str_c(title,
+#                           "van ",
+#                           day(start_date), "-", month(start_date, label = TRUE), "-", year(start_date),
+#                           " t/m ",
+#                           day(end_date), "-", month(end_date, label = TRUE), "-", year(end_date)),
+#             subtitle) +
+#             labs(caption) +
+#     theme(legend.position = "none",
+#           axis.text = element_text(size = 12),
+#           plot.title = element_text(size = 12, hjust = 0.5))
+# }
+
+# Define date sequences (assuming start_date_sector_indices is defined)
+dates <- all_prices_local_long %>% 
+  filter(date >= start_date_sector_indices) |> 
+  ungroup() %>% select(date) %>% arrange(date) |> unique()
+
+twee_jaar_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 24))
+jaar_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 12))
+kwartaal_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 3))
+maand_datums <- start_date_sector_indices %m+% months(seq(0, length(dates$date), 1))
+
+datum_breaks <- function(start_date, end_date) {
+  if (as.Date(end_date) - as.Date(start_date) >= years(6)) {
+    twee_jaar_datums[twee_jaar_datums >= as.Date(start_date) & twee_jaar_datums <= as.Date(end_date)]
+  } else if (as.Date(end_date) - as.Date(start_date) >= months(13) &
+             as.Date(end_date) - as.Date(start_date) < years(6)) {
+    jaar_datums[jaar_datums >= as.Date(start_date) & jaar_datums <= as.Date(end_date)]
+  } else if (as.Date(end_date) - as.Date(start_date) > months(4) &
+             as.Date(end_date) - as.Date(start_date) < months(13)) {
+    kwartaal_datums[kwartaal_datums >= as.Date(start_date) & kwartaal_datums <= as.Date(end_date)]
+  } else {
+    maand_datums[maand_datums >= as.Date(start_date) & maand_datums <= as.Date(end_date)]
+  }
+}
+```
+
+
+```{r indices_perf_line_functies2}
+
 indices_plot <- function(data, start_date = start_date_sector_indices, end_date = snapshot_date, title = title, subtitle = subtitle, caption = caption) {
-  #welke tickers zijn available vanaf start_date
-  available_tickers <-
-    data |> filter(date == start_date) |> pull(ticker)
-  #data maken met indices startdatum = start_date
-  data <- data |> 
-    group_by(ticker) |> 
-    filter(date >= start_date, date <= end_date, ticker %in% available_tickers) |> 
-    mutate(price_delta = ifelse(date == start_date, 0, price_index/lag(price_index) - 1), 
-           price_index = 100 * cumprod(1 + price_delta)) |> 
-    select(- price_delta)
-  #BM
+  snapshot_date <- as.Date("2025-03-10")  # Adjust as needed
   
-    ggplot(data = data,
-           aes(x = date, y = price_index, group = ticker, col = fill, alpha = alpha)) +
+  available_tickers <- data |> 
+    filter(date == start_date) |> 
+    pull(ticker)
+  
+  data <- data |>
+    group_by(ticker) |>
+    filter(date >= start_date, date <= end_date, ticker %in% available_tickers) |>
+    mutate(price_delta = ifelse(date == start_date, 0, price_index / lag(price_index) - 1),
+           price_index = 100 * cumprod(1 + price_delta),
+           date = as.Date(date)) |>
+    select(-price_delta) |>
+    arrange(ticker, date)
+  
+  label_data <- data |> filter(date == end_date)
+  
+  # Calculate breaks
+  #breaks <- unique(c(datum_breaks(start_date, end_date), snapshot_date, end_date))
+  
+  # Fallback: Adjust interval dynamically if too few breaks
+  # if (length(breaks) <= 12) {
+  #   days_span <- as.numeric(as.Date(end_date) - as.Date(start_date))
+  #   target_breaks <- 10  # Aim for ~10 breaks, adjustable
+  #   interval <- ceiling(days_span / target_breaks)  # Dynamic interval in days
+  #   breaks <- seq(as.Date(start_date), as.Date(end_date), by = paste(interval, "days"))
+  # }
+  
+  if(start_date == as.Date(last_ultimo_year)) {nudge_x_value <- 10} else if(start_date == as.Date(start_date_attr)) {nudge_x_value <- 400} else {nudge_x_value <- 100}
+  
+  ggplot(data = data,
+         aes(x = date, y = price_index, group = ticker, col = fill, alpha = alpha)) +
     geom_line(linewidth = 1.2) +
     scale_color_identity() +
-    geom_label_repel(data = data |> filter(date == snapshot_date),
+    geom_label_repel(data = label_data,
                      aes(label = label, fill = fill, alpha = alpha),
                      col = "black", 
-                     nudge_x = 200, max.overlaps = 30) +
+                     nudge_x = nudge_x_value, 
+                     max.overlaps = 30) +
+    
+                     # col = "black",
+                     # nudge_x = nudge_x_value,           # Smaller nudge for precision, adjust as needed
+                     # hjust = 0,              # Left-align label text, so it starts at the point and extends right
+                     # #direction = "y",        # Repel vertically, not horizontally, to keep rightward nudge
+                     # box.padding = 0.5,      # Reduced padding to stay closer to point
+                     # force = 0.5,              # Less repulsion to respect nudge_x
+                     # force_pull = 0,         # Minimize pull-back toward point
+                     # min.segment.length = 0,
+                     # segment.size = 0.5,
+                     # max.overlaps = 13,
+                     # xlim = c(NA, end_date + 200)) +
     scale_fill_identity() +
     scale_alpha_identity() +
-    scale_x_date(limits = c(as.Date(start_date), end_date + 700), breaks = datum_breaks(start_date, end_date), date_labels = "%y") +
+    scale_x_date(#limits = c(start_date, end_date + 150),
+                 limits = c(start_date, end_date + max( as.integer((end_date - start_date) * .3)), 100),
+                 breaks = unique(c(datum_breaks(start_date, end_date), snapshot_date, end_date)),
+                 date_labels = datum_labels(start_date, end_date)) +
     scale_y_continuous(breaks = seq(0, 1000, 100), minor_breaks = seq(0, 1000, 50)) +
     theme_bw() +
-    labs(x = "", y = "")+
-    ggtitle(label = str_c(title, 
-                          "van ", 
-                          day(start_date), "-", month(start_date, label = TRUE), "-", year(start_date), 
-                          " t/m ", 
+    labs(x = "", y = "") +
+    ggtitle(label = str_c(title,
+                          " van ",
+                          day(start_date), "-", month(start_date, label = TRUE), "-", year(start_date),
+                          " t/m ",
                           day(end_date), "-", month(end_date, label = TRUE), "-", year(end_date)),
             subtitle) +
-            labs(caption) +
+    labs(caption = caption) +
     theme(legend.position = "none",
           axis.text = element_text(size = 12),
           plot.title = element_text(size = 12, hjust = 0.5))
 }
 
+pfs_linechart <- function(start_date = start_date_sector_indices, end_date = snapshot_date) {
+  indices_plot(data = pfs_chart_data, start_date, end_date, 
+               title = "Modelportefeuilles ", 
+               subtitle = NULL, caption = NULL)
+}
+pfs_bms_linechart <- function(start_date = start_date_sector_indices, end_date = snapshot_date) {
+  indices_plot(data = pfs_bms_chart_data, start_date, end_date, 
+               title = "Modelportefeuilles en benchmarks ", 
+               subtitle = NULL, caption = NULL)
+}
+sectors_linechart <- function(start_date = start_date_sector_indices, end_date = snapshot_date) {
+  indices_plot(data = sector_chart_data_incl, start_date, end_date, 
+               title = "MSCI sector indices in EUR, incl div. ", 
+               subtitle = NULL, caption = NULL)
+}
+styles_linechart <- function(start_date = start_date_sector_indices, end_date = snapshot_date) {
+  indices_plot(data = styles_chart_data_incl |> 
+                 bind_rows(benega_msdewin_chart_data |> 
+                 filter(ticker == "MSDEWIN")), start_date, end_date, 
+               title = "MSCI stijlindices, incl div., in EUR, ", 
+               subtitle = NULL, caption = NULL)
+}
+landen_linechart <- function(start_date = start_date_sector_indices, end_date = snapshot_date) {
+  indices_plot(data = landen_chart_data, start_date, end_date, 
+               title = "MSCI landen in EUR, incl div., ", 
+               subtitle = NULL, caption = NULL)
+}
+other_currency_linechart <- function(start_date = start_date_sector_indices, end_date = snapshot_date) {
+  indices_plot(data = other_currency_chart_data, start_date, end_date, 
+               title = "Other en enkele valuta's, in EUR, ", 
+               subtitle = NULL, caption = NULL)
+}
+
 all_indices_linechart <- function(start_date = start_date_sector_indices, end_date = snapshot_date) {
   grid.arrange(
-      indices_plot(data = pfs_chart_data, start_date, end_date, 
-               title = "Portefeuilles ", 
-               subtitle = NULL, caption = NULL),
-      indices_plot(data = pfs_bms_chart_data, start_date, end_date, 
-               title = "Portefeuilles en benchmarks ", 
-               subtitle = NULL, caption = NULL),
-      indices_plot(data = sector_chart_data_incl, start_date, end_date, title = "MSCI sector indices in EUR, incl div. ", subtitle = NULL, caption = NULL),
-      indices_plot(data = styles_chart_data_incl |>
-                 bind_rows(benega_msdewin_chart_data |> filter(ticker == "MSDEWIN")), start_date, end_date, 
-               title = "MSCI stijlindices, incl div., in EUR, ", subtitle = NULL, caption = NULL),
-      indices_plot(data = landen_chart_data, start_date, end_date, title = "MSCI landen in EUR, incl div., ", subtitle = NULL, caption = NULL),
-      indices_plot(data = other_currency_chart_data, start_date, end_date, title = "Other en enkele valuta's, in EUR, ", subtitle = NULL, caption = NULL),
-      nrow = 3)
+    pfs_linechart(start_date = start_date, end_date = end_date),
+    pfs_bms_linechart(start_date = start_date, end_date = end_date),
+    sectors_linechart(start_date = start_date, end_date = end_date),
+    styles_linechart(start_date = start_date, end_date = end_date),
+    landen_linechart(start_date = start_date, end_date = end_date),
+    other_currency_linechart(start_date = start_date, end_date = end_date),
+  nrow = 3)
 }
+
 ```
 
 ::: panel-tabset
@@ -9122,7 +9455,7 @@ all_indices_linechart <- function(start_date = start_date_sector_indices, end_da
 #| fig-width: 14
 #| fig-height: 10
 
-all_indices_linechart(start_date = as.Date(start_date_sector_indices), end_date = snapshot_date)
+all_indices_linechart(start_date = start_date_attr, end_date = snapshot_date)
 ```
 
 ### vanaf start VP50RM50 en VP100

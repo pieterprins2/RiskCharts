@@ -5441,10 +5441,10 @@
       "checksum": "df01cea4c9f7c918f6ec22cb3104fbb3"
     },
     "app.qmd": {
-      "checksum": "dc2acb03153ff7ff09d01282ebc14007"
+      "checksum": "91ad9d39be51a5b4018835a094ab9ee8"
     },
     "app.rmarkdown": {
-      "checksum": "8da39f80d3eef488f6754f2d506d62e5"
+      "checksum": "fdd6380fd262551725f890f536424898"
     },
     "bloomberg_data_1feb.rds": {
       "checksum": "485e545603cebc21c2bf97b3abffc798"
@@ -5459,7 +5459,7 @@
       "checksum": "77f2c82d846fdd38b82fe6e1701bd3e3"
     },
     "bloomberg_data.rds": {
-      "checksum": "2cedbc7fd7f9ac0a938cdb66d9e6a835"
+      "checksum": "a92b2958887640945ddf976648acf5e9"
     },
     "check_meerdere_koersen.R": {
       "checksum": "84a6c2e811b35d123aaa5a6614c2f0ee"
@@ -5472,6 +5472,9 @@
     },
     "Developed_3_Factors.csv": {
       "checksum": "e6807d0fb0a455c63cabe59d5a6f35c5"
+    },
+    "gt_modelpfs_performance_feb.qmd": {
+      "checksum": "2c84e3462de3fc83259f0d7d97599a8f"
     },
     "gt_modelpfs_performance.qmd": {
       "checksum": "19be08d267a28f1d74cfdf613cb5e8e5"
@@ -10493,7 +10496,7 @@
       "checksum": "8fabb0bd1cca6e87de120112c3ebd41a"
     },
     "RiRe.RData": {
-      "checksum": "394646c77c341120b1271216fd34c90b"
+      "checksum": "c97953a5b6f1e4954fe5cdadffe79644"
     },
     "sheet_holdings__klad.xlsx": {
       "checksum": "b58e556935d46ac2322e0288cc22bbfa"
@@ -10523,7 +10526,7 @@
       "checksum": "fb6ccc1fab136af2eb955ce600f356f7"
     },
     "yyyymmdd Performance_model_pfs.html": {
-      "checksum": "881c357d328c74054c878a32fb7c50e2"
+      "checksum": "2dafb7b7e987fb7884c01d3e5e0286de"
     }
   },
   "users": null
