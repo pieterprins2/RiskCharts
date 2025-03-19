@@ -9493,8 +9493,8 @@ all_indices_linechart(start_date = as.Date(start_date_vd), end_date = snapshot_d
 landen_chart_data |> 
   bind_rows(other_currency_chart_data) |> 
   bind_rows(styles_chart_data_incl) |> 
-  #filter(date == min(date)) |>
-  select(label, name, ticker) |> #, start_date = date) |>
+  filter(date == max(date)) |>
+  select(label, name, ticker, update = date) |>
   unique() |> 
   rename(bloomberg_ticker = ticker) |>
   ungroup() |> 
