@@ -9493,7 +9493,7 @@ landen_chart_data |>
   bind_rows(other_currency_chart_data) |> 
   bind_rows(styles_chart_data_incl) |> 
   filter(date == max(date)) |>
-  select(label, name, ticker, update = date) |>
+  select(label, name, ticker, datum = date) |>
   unique() |> 
   rename(bloomberg_ticker = ticker) |>
   ungroup() |> 
