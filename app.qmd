@@ -9380,9 +9380,8 @@ indices_plot <- function(data, start_date = start_date_sector_indices, end_date 
                      # xlim = c(NA, end_date + 200)) +
     scale_fill_identity() +
     scale_alpha_identity() +
-    scale_x_date(#limits = c(start_date, end_date + 150),
-                 limits = c(start_date, end_date + max( as.integer((end_date - start_date) * .3)), 100),
-                 breaks = unique(c(datum_breaks(start_date, end_date), snapshot_date, end_date)),
+    scale_x_date(limits = c(start_date, end_date + max( as.integer((end_date - start_date) * .3)), 100),
+                 #breaks = unique(c(datum_breaks(start_date, end_date), snapshot_date, end_date)),
                  date_labels = datum_labels(start_date, end_date)) +
     scale_y_continuous(breaks = seq(0, 1000, 100), minor_breaks = seq(0, 1000, 50)) +
     theme_bw() +
@@ -9551,7 +9550,7 @@ if(str_detect(getwd(), "pieter")) {
 ## Waardering
   - Als basis voor de waarde van alle individuele regels in de modelportefeuilles dienen bestanden uit AIRS.
   - Voor intra-maand updates en voor aanvullende historie t.b.v. risicoberekeningen worden koersen uit Bloomberg gebruikt.
-  - De enige verschillen die kunnen overblijven zijn in de cash standen. De reden hiervoor is dat de cash standen in AIRS na het moment waarop de VOLK bestanden zijn gedraaid, aan het begin van de maand, nog kunnen veranderen. Daarom worden een aantal dagen na de maandwinde nieuwe VOLK bestanden gemaakt.
+  - De enige verschillen die kunnen overblijven zijn in de cash standen. De reden hiervoor is dat de cash standen in AIRS na het moment waarop de VOLK bestanden zijn gedraaid, aan het begin van de maand, nog kunnen veranderen. Daarom worden een aantal dagen na de maandeinde nieuwe VOLK bestanden gemaakt.
   - De performance cijfers sluiten dus aan bij de cijfers uit AIRS. Behalve mogelijk voor de mtd cijfers.
 
 ## Input
